@@ -1,0 +1,268 @@
+<div class="container" id="search">
+  <h3>Business search</h3>
+  <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" ngNativeValidate>
+    <p class="title">Keyword<span class="star">*</span></p>
+    <input type="text" class="form-control" value={{selectedInput.text}} matInput name="keyword" id="keyword" [(ngModel)]="selectedInput" [matAutocomplete]="auto"
+    [formControl]="InputCtrl" required>
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onSelected()"
+      [displayWith]="displayWith">
+      <mat-option *ngIf="isLoading" class="is-loading">Loading...</mat-option>
+      <ng-container *ngIf="!isLoading">
+        <mat-option *ngFor="let movie of filteredInputs" [value]="movie">
+          <span><b>{{movie}}</b></span>
+        </mat-option>
+      </ng-container>
+    </mat-autocomplete>
+  <br>
+  <ng-container *ngIf="errorMsg">
+    {{errorMsg}}
+  </ng-container>
+  <div class="row">
+    <div class="col-lg">
+      <p class="title">Distance(miles)</p>
+      <input class="form-control" type="text" name="distance" id="distance" formControlName="distance" placeholder="10"/>
+    </div>
+
+    <div class="col-lg">
+      <p class="categpry">Category<span class="star">*</span></p>
+          <select class="form-select" id="category"  formControlName="category" style="width:80%" required>
+          <option value="all" selected>Default</option>
+          <option value="arts,entertainment">Arts & Entertainment</option>
+          <option value="health,medical">Health & Medical</option>
+          <option value="hotels,travel">Hotels & Travel</option>
+          <option value="food">Food</option>
+          <option value="professional">Professional Services</option>
+          </select>
+    </div>
+  </div>
+
+  <p class="title">Location<span class="star">*</span></p>
+  <input class="form-control" type="text" name="location" id="location" formControlName="location" required />
+
+  <div id="auto">
+      <label id="autogeo" for="autogeo" style="word-wrap:break-word">
+         <input type="checkbox" id="autogeo" (change)='onSelect($event)' [checked]="accept"> Auto-detect my location
+      </label>
+  </div>
+
+  <button type="submit" value="Submit" id="submit" class="btn btn-danger">Submit</button>
+  <!-- <button type="button"  onclick="infoSubmit()" class="submit">Submit</a></button> -->
+  <button type="button" id="clear" (click)="clearSelection()" class="btn btn-primary">Clear</button>
+  </form>
+</div>
+
+<ng-container *ngIf="dataIsEmpty && ifsubmitted; else table">
+  <div id="err">
+    <p id="errMessage">No results available</p>
+  </div>
+</ng-container>
+
+<ng-template #table>
+<div id="table" *ngIf="!dataIsEmpty && ifsubmitted && showTable">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">No.</th>
+        <th scope="col">Image</th>
+        <th scope="col">Business Name</th>
+        <th scope="col">Rating</th>
+        <th scope="col">Distance(Miles)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let business of returnData; let r = index">
+        <th scope="row" (click)="displayDetail(business.id)">
+          {{r + 1}}
+        </th>
+        <td (click)="displayDetail(business.id)">
+          <img src=  {{business.image_url}}  width="110" height="110">
+        </td>
+        <td (click)="displayDetail(business.id)">
+          {{business.name}}
+        </td>
+        <td (click)="displayDetail(business.id)">
+          {{business.rating}}
+        </td>
+        <td (click)="displayDetail(business.id)">
+          {{(business.distance * 0.000621371192).toFixed(2)}}
+        </td>
+
+      </tr>
+    </tbody>
+
+  </table>
+</div>
+</ng-template>
+
+
+<div id="detail" *ngIf="this.detailData?.name && !showTable">
+  <svg (click)="showTableFunc()" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+  </svg>
+<h3 *ngIf="detailData?.name">{{detailData.name}}</h3>
+<mat-tab-group mat-align-tabs="center" backgroundColor="accent">
+  <mat-tab label="Busines Details">
+    <div class="parent" id="BusinesDetetail">
+      <div class="row">
+        <div class="child col-lg" *ngIf="detailData?.location && detailData.location.display_address.length !== 0">
+          <h4>Address</h4>
+          <p>{{displaylocation}}</p>
+        </div>
+        <div class="child col-lg" *ngIf="detailData?.categories && detailData.categories.length !== 0">
+          <h4>Category</h4>
+          <p>{{displaycategories}}</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="child col-lg" *ngIf="detailData?.display_phone">
+          <h5>Phone</h5>
+          <p>{{detailData.display_phone}}</p>
+        </div>
+        <div class="child col-lg" *ngIf="detailData?.price">
+          <h5>Price Range</h5>
+          <p>{{detailData.price}}</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="child col-lg" *ngIf="detailData?.hours[0].is_open_now">
+          <h5>Status</h5>
+          <p *ngIf="status" style="color: green">Open Now</p>
+          <p *ngIf="!status" style="color: red">Closed</p>
+        </div>
+        <div class="child col-lg" *ngIf="detailData?.url">
+          <h5>Visit yelp for more</h5>
+          <p><a href={{detailData.url}}>Business link</a></p>
+        </div>
+      </div>
+
+    </div>
+    <button type="button" id="reserveButton" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal" *ngIf="detailData?.name && !Reserved" (click) = "toggleDisplayReserve()">Reserve Now</button>
+    <button type="button" id="cancelButton" class="btn btn-primary" *ngIf="detailData?.name && Reserved" (click)="cancelReserve(detailData.name)">Cancel The Reserve</button>
+    <div id="share">
+      <p>Share on:
+      <a href="https://twitter.com/intent/tweet?text={{twitterText}}&url={{detailData.url}}"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-twitter" viewBox="0 0 16 16">
+        <path d="M5.026 15c6.038 0 9.341-5.003 9.341-9.334 0-.14 0-.282-.006-.422A6.685 6.685 0 0 0 16 3.542a6.658 6.658 0 0 1-1.889.518 3.301 3.301 0 0 0 1.447-1.817 6.533 6.533 0 0 1-2.087.793A3.286 3.286 0 0 0 7.875 6.03a9.325 9.325 0 0 1-6.767-3.429 3.289 3.289 0 0 0 1.018 4.382A3.323 3.323 0 0 1 .64 6.575v.045a3.288 3.288 0 0 0 2.632 3.218 3.203 3.203 0 0 1-.865.115 3.23 3.23 0 0 1-.614-.057 3.283 3.283 0 0 0 3.067 2.277A6.588 6.588 0 0 1 .78 13.58a6.32 6.32 0 0 1-.78-.045A9.344 9.344 0 0 0 5.026 15z"/>
+      </svg></a>
+      <a href="https://www.facebook.com/sharer/sharer.php?u={{detailData.url}}"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
+      <path d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z"/>
+      </svg></a>
+    </p>
+    </div>
+    <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" *ngIf="detailData?.photos">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+            <div id="imgShow" class="d-flex">
+              <img src={{detailData.photos[0]}} class="d-block w-50" alt="Business Picture">
+            </div>
+        </div>
+        <div class="carousel-item" *ngFor="let p of photos">
+          <div class="justify-content-center d-flex">
+
+            <img src={{p}} class="d-block w-80 h-80" alt="Business Picture">
+          </div>
+        </div>
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </mat-tab>
+  <mat-tab label="Map Location">
+    <div id="map">
+      <google-map [options]="mapOptions" *ngIf="detailData?.coordinates" [width]="720">
+        <map-marker [position]="marker.pose" *ngIf="detailData?.coordinates"></map-marker>
+      </google-map>
+    </div>
+  </mat-tab>
+  <mat-tab label="Reviews">
+    <div id="review" *ngFor="let review of reviewData.reviews;let e = even" [ngClass]="{evenItems : e}">
+      <h5>{{review.user.name}}</h5>
+      <p>Rating: <span>{{review.rating}}</span>/5</p>
+      <p>{{review.text}}</p>
+      <p>{{review.time_created.split(" ")[0]}}</p>
+
+    </div>
+
+  </mat-tab>
+</mat-tab-group>
+<br>
+</div>
+
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" [ngStyle]="{'display' : displayReserve}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reservation Form</h5>
+      </div>
+      <div class="modal-body">
+        <h6>{{detailData.name}}</h6>
+        <form #bookingForm class="needs-validation" novalidate>
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="col-form-label">Email address</label>
+            <input type="email" class="form-control" id="InputEmail1" aria-describedby="emailHelp" [formControl]="emailInput"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required>
+            <div class="invalid-feedback feedback-pos">
+              Email must be a valid email address
+            </div>
+            <div class="invalid-feedback">
+              Email is required!
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="start">Date</label>
+            <input type="date" id="start" name="trip-start"  min={{newdate}} [formControl]="dateInput" required>
+            <div class="invalid-feedback">
+              Date is required!
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="container">
+            <div class="row">
+              <label for="start">Time</label>
+              <select class="form-select col-3" style="width: 20%;" [formControl]="hourInput" required>
+                <option>10</option>
+                <option>11</option>
+                <option>12</option>
+                <option>13</option>
+                <option>14</option>
+                <option>15</option>
+                <option>16</option>
+                <option>17</option>
+              </select>
+              :
+              <select class="form-select col-3" style="width: 20%;" [formControl]="minuteInput" required>
+                <option>00</option>
+                <option>15</option>
+                <option>30</option>
+                <option>45</option>
+              </select>
+              <div id="svg" class="col-6">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+                <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"/>
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"/>
+              </svg>
+              </div>
+            </div>
+            </div>
+          </div>
+          <button id="reserveSubmit" type="button" class="btn btn-danger" (click)="bookingForm.checkValidity() ? addToReserves(): bookingForm.classList.add('was-validated')">submit</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

@@ -1,0 +1,14 @@
+runtime: nodejs16
+
+instance_class: F2
+
+env_variables:
+  BUCKET_NAME: "frontendtest"
+
+handlers:
+- url: /
+  static_files: dist/app/index.html
+  upload: dist/app/index.html
+
+- url: /
+  static_dir: dist/app

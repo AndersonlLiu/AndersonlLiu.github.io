@@ -1,0 +1,187 @@
+#search {
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  background-color: white;
+  border: 1px solid lightgray;
+  border-radius: 15px;
+  padding-top: 10px;
+}
+#table {
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  border-radius: 12px;
+  padding: 0;
+}
+
+#detail {
+  margin-top: 50px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  background-color: white;
+}
+table, th, td {
+  background-color: white;
+}
+table {
+  margin-left: 0;
+  margin-right: 0;
+}
+th, td {
+  text-align: center;
+}
+tbody td {
+  font-family: 'Lato';
+}
+thead th:nth-child(1) {
+  width: 5%;
+}
+
+thead th:nth-child(2) {
+  width: 10%;
+}
+
+thead th:nth-child(3) {
+  width: 45%;
+}
+
+thead th:nth-child(4) {
+  width: 20%;
+}
+
+thead th:nth-child(5) {
+  width: 20%;
+}
+h6 {
+  text-align: center;
+}
+body {
+  background: fixed;
+}
+h4 {
+  text-align: center;
+  margin-top: 30px;
+}
+#autogeo {
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+input #autogeo {
+  margin-right: 10px;
+}
+#submit {
+  margin-left: 250px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+#clear {
+  margin-left: 20px;
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+.star {
+  color: red;
+}
+#err {
+  background-color: white;
+
+}
+
+#err {
+  width: 30%;
+  margin-top: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 12px;
+}
+
+#errMessage {
+  font-weight: bold;
+  text-align: center;
+  color: red;
+}
+h3 {
+  text-align: center;
+}
+#BusinesDetetail p, #BusinesDetetail h5{
+  text-align: center;
+}
+
+#reserveButton, #cancelButton {
+  margin-top: 30px;
+  margin-left: 300px;
+
+}
+
+.carousel-inner{
+  width: 500px;
+  max-height: 500px !important;
+}
+
+#start {
+  width: 100%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  margin-bottom: 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+#reserveSubmit {
+  margin-left: 200px;
+}
+#svg {
+  padding-top: 8px;
+}
+#share {
+  margin-top: 30px;
+  margin-bottom: 15px;
+}
+#share p {
+  text-align: center;
+}
+#review {
+  padding-left: 5px;
+}
+.evenItems {
+  background-color: lightgray;
+}
+#imgshow {
+  padding-left: 150px;
+  padding-right: 150px;
+}
+#keyword {
+  width: 90%;
+}
+@media (max-width: 480px) {
+  #search {
+    width: 90%;
+  }
+  option {
+    position: relative;
+  }
+  #submit {
+    margin-left: 70px;
+  }
+  #err {
+    width: 50%;
+  }
+  #table {
+    width: 90%;
+  }
+  #detail {
+    width: 90%
+  }
+  #reserveButton, #cancelButton {
+    margin-left: 110px;
+    margin-top: 10px;
+  }
+  #reserveSubmit {
+    margin-left: 130px;
+  }
+}
+

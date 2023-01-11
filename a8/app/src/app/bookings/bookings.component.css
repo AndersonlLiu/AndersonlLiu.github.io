@@ -1,0 +1,32 @@
+h1 {
+  font-size: 30px;
+  text-align: center;
+}
+th, td{
+  text-align: center;
+}
+p {
+  text-align: center;
+  color: red;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+table {
+  width: 60%;
+  border: 1px solid lightgray;
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+span {
+  margin-left: 20px;
+}
+
+#reservePage {
+  background-attachment: fixed;
+  background-image: url("../../city.jpg");
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+}
